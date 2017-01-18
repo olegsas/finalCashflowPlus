@@ -1,5 +1,7 @@
 const DATE_OF_DENOMINATION = new Date("2016-07-01");//the date of denomination, the constants
 const DAY_OF_DENOMINATION = Math.floor(DATE_OF_DENOMINATION.getTime()/(1000*60*60*24));// we find a day since zero point
+var WalletsIdH = {}; // the object with fields {name: ObjectID} for binding with transaction collection
+
 function standartDate(anyDay){// this function normalize string date into a Date object
 
     var anyDayA = anyDay.split("/");// we have got an array of 3 numbers in a string type
@@ -13,6 +15,13 @@ function standartDate(anyDay){// this function normalize string date into a Date
     
     return anyDATE;
 
+}
+
+function findWallet(name){
+    // we find the _id field of the wallet with the certain name
+    var Cursor = db.wallets.find({"name": name}).toArray();
+    var Element = Cursor[0];
+    WalletsIdH[name] = Element['_id'];// we store ObjectID from the database into the hash
 }
 
 function dataRates(){
@@ -181,7 +190,7 @@ function makeExchangeTransaction(nowTimeDay, Type, Category, Name, Amount, Curre
     var Currency = Currency;
     var Account = Account;
     db.transactions.insert({"Date": exchangeDate, "Type": Type, "Category": Category, "Name": Name,
-                           "Amount": Amount, "Currency": Currency, "Account": Account});
+                           "Amount": Amount, "Currency": Currency, "Account": Account, "Wallet_id": WalletsIdH[Account]});
     // print("start insert");
     // print("Date = " + exchangeDate);
     // print("Type = " + Type);
@@ -357,6 +366,9 @@ function denominationExchange(nowTimeDay, Byr, Byn){
 }
 
 function runCashFlowPLus(begin, end){// we want to use day from the begining Day 1970
+    // setup the WalletsIdH
+    findWallet("PurseByr"); findWallet("PurseByn"); findWallet("SafeUsd");
+    //_id of the wallets are in the WalletsIdH[accountName]
     //ratesH.data is in a string format
     var startDATE = standartDate(begin);
     var startTimeDay = Math.floor(startDATE.getTime()/(1000*60*60*24));
