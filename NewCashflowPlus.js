@@ -133,7 +133,7 @@ function calculateCashDelta(nowTimeDay){
         return cashboxA;
 }
 
-function exchange(nowTimeDay, ratesH, amount, fromCurrency, toCurrency, Byr, Byn, Usd){
+function exchange(nowTimeDay, ratesH, amount, fromCurrency, toCurrency){
     // amount is the volume of the fromCurency
     var fromCurency;
     var toCurrency;
