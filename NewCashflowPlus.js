@@ -282,7 +282,8 @@ function ifWeNeedExchange(nowTimeDay, ratesH, Byr, Byn, Usd){
         if((Byn > 0) && (Usd < 0)){
             // print("We exchangr Byn ##day is = " + nowTimeDay);
             // print("Byn is = " + Byn);
-            weNeedByn = Math.round(-Usd*rate);
+            UsdNoCent = Math.floor(Usd); // Usd <0 if Usd = -5.60 then UsdNoCent = -6
+            weNeedByn = -UsdNoCent * rate;
             // money for compensate -Usd
             if(Byn >= weNeedByn){
                 // we have enough money for compensate -Usd
@@ -297,7 +298,8 @@ function ifWeNeedExchange(nowTimeDay, ratesH, Byr, Byn, Usd){
             
             if(Byn < weNeedByn){
                 // we have not enough money, we will sell all Byr
-                weTakeByn = Byn; // we take all Byr money
+                weCanBuyUsd = Math.floor(Byn / rate); // we can buy this Usd without cents
+                weTakeByn = weCanBuyUsd * rate; // we take all Byn money to buy Usd without cents
                 // how many Usd we have if we sell all Byr
                 exchangeResultA = exchange(nowTimeDay, ratesH, weTakeByn, "Byn", "Usd");
                 // exchangeResultA[0] = fromByr; exchangeResultA[1] = fromByn; exchangeResultA[2] = fromUsd;
@@ -313,8 +315,8 @@ function ifWeNeedExchange(nowTimeDay, ratesH, Byr, Byn, Usd){
         if ((Byn < 0) && (Usd > 0)){
             // print("We exchange Usd ##day is = " + nowTimeDay);
             // print("Usd is = " + Usd);
-            weNeedUsd = Math.round(-Byn / rate);
-            // money for compensate -Byr
+            weNeedUsd = -Math.floor(Byn / rate);// we need Usd is rounded for the bigger nearest integer value
+            // money for compensate -Byn
             if(Usd >= weNeedUsd){
                 // we have enough money for compensate -Byr
                 exchangeResultA = exchange(nowTimeDay, ratesH, weNeedUsd, "Usd", "Byn");
@@ -328,8 +330,9 @@ function ifWeNeedExchange(nowTimeDay, ratesH, Byr, Byn, Usd){
 
             if(Usd < weNeedUsd){
                 // we have not enough money, we will sell all Usd
-                weTakeUsd = Usd; // we take all Usd money
-                weHaveByn = Math.round(weTakeUsd * rate);
+                weCanSellUsd = Math.floor(Usd); // we can sell Usd without cents
+                weTakeUsd = weCanSellUsd; // we take all Usd money without cents
+                weHaveByn = weTakeUsd * rate;
                 // how many Byr we have if we sell all Usd
                 exchangeResultA = exchange(nowTimeDay, ratesH, weTakeUsd, "Usd", "Byn");
                 // exchangeResultA[0] = fromByr; exchangeResultA[1] = fromByn; exchangeResultA[2] = fromUsd;
