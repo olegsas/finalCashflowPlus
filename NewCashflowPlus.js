@@ -222,10 +222,12 @@ function ifWeNeedExchange(nowTimeDay, ratesH, Byr, Byn, Usd){
     
     if(nowTimeDay < DAY_OF_DENOMINATION){
         if((Byr > 0) && (Usd < 0)){
-            // print("We exchange Byr ##day is = " + nowTimeDay);
-            // print("Byr is = " + Byr);
+            print("We exchange Byr ##day is = " + nowTimeDay);
+            print("Byr is = " + Byr);
             UsdNoCent = Math.floor(Usd); // Usd <0 if Usd = -5.60 then UsdNoCent = -6
+            // print("UsdNoCent = " + UsdNoCent);
             weNeedByr = -UsdNoCent * rate;
+            // print("weNeedByr = " + weNeedByr);
             // money for compensate -Usd
             if(Byr >= weNeedByr){
                 // we have enough money for compensate -Usd
@@ -241,9 +243,13 @@ function ifWeNeedExchange(nowTimeDay, ratesH, Byr, Byn, Usd){
             if(Byr < weNeedByr){
                 // we have not enough money, we will sell all Byr
                 weCanBuyUsd = Math.floor(Byr / rate); // we can buy this Usd without cents
+                print("weCanBuyUsd = " + weCanBuyUsd);
                 weTakeByr = weCanBuyUsd * rate; // we take all Byr money to buy Usd without cents
+                print("weTakeByr = " + weTakeByr);
                 // how many Usd we have if we sell all Byr
                 exchangeResultA = exchange(nowTimeDay, ratesH, weTakeByr, "Byr", "Usd");
+                print("exchangeResultA[0] = " + exchangeResultA[0]);
+                print("exchangeResultA[5] = " + exchangeResultA[5]);
                 // exchangeResultA[0] = fromByr; exchangeResultA[1] = fromByn; exchangeResultA[2] = fromUsd;
                 // exchangeResultA[3] = toByr; exchangeResultA[4] = toByn; exchangeResultA[5] = toUsd;
                 makeExchangeTransaction(nowTimeDay, "Exp", "Exchange", "ByrUsd", exchangeResultA[0], "Byr", "PurseByr");
