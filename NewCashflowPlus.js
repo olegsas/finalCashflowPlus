@@ -206,13 +206,17 @@ function ifWeNeedExchange(nowTimeDay, ratesH, Byr, Byn, Usd){
     var weTakeByn;
     var weHaveByn;
     var rate = ratesH.rateInDays[nowTimeDay]; // rate for the nowTimeDay
+    var UsdNoCent; // in case of nowTimeDay < DAY_OF_DENOMINATION Byr > 0 Usd < 0
+    var weCanBuyUsd; // in case of nowTimeDay < DAY_OF_DENOMINATION Byr > 0 Usd < 0
+    var weCanSellUsd; // in case of nowTimeDay < DAY_OF_DENOMINATION Byr < 0 Usd > 0
     
     
     if(nowTimeDay < DAY_OF_DENOMINATION){
         if((Byr > 0) && (Usd < 0)){
             // print("We exchange Byr ##day is = " + nowTimeDay);
             // print("Byr is = " + Byr);
-            weNeedByr = Math.round(-Usd*rate);
+            UsdNoCent = Math.floor(Usd); // Usd <0 if Usd = -5.60 then UsdNoCent = -6
+            weNeedByr = -UsdNoCent * rate;
             // money for compensate -Usd
             if(Byr >= weNeedByr){
                 // we have enough money for compensate -Usd
@@ -227,7 +231,8 @@ function ifWeNeedExchange(nowTimeDay, ratesH, Byr, Byn, Usd){
             
             if(Byr < weNeedByr){
                 // we have not enough money, we will sell all Byr
-                weTakeByr = Byr; // we take all Byr money
+                weCanBuyUsd = Math.floor(Byr / rate); // we can buy this Usd without cents
+                weTakeByr = weCanBuyUsd * rate; // we take all Byr money to buy Usd without cents
                 // how many Usd we have if we sell all Byr
                 exchangeResultA = exchange(nowTimeDay, ratesH, weTakeByr, "Byr", "Usd");
                 // exchangeResultA[0] = fromByr; exchangeResultA[1] = fromByn; exchangeResultA[2] = fromUsd;
@@ -243,7 +248,7 @@ function ifWeNeedExchange(nowTimeDay, ratesH, Byr, Byn, Usd){
         if ((Byr < 0) && (Usd > 0)){
             // print("We exchange Usd ##day is = " + nowTimeDay);
             // print("Usd is = " + Usd);
-            weNeedUsd = Math.round(-Byr / rate);
+            weNeedUsd = -Math.floor(Byr / rate);// we need Usd is rounded for the bigger nearest integer value
             // money for compensate -Byr
             if(Usd >= weNeedUsd){
                 // we have enough money for compensate -Byr
@@ -258,8 +263,9 @@ function ifWeNeedExchange(nowTimeDay, ratesH, Byr, Byn, Usd){
 
             if(Usd < weNeedUsd){
                 // we have not enough money, we will sell all Usd
-                weTakeUsd = Usd; // we take all Usd money
-                weHaveByr = Math.round(weTakeUsd * rate);
+                weCanSellUsd = Math.floor(Usd); // we can sell Usd without cents
+                weTakeUsd = weCanSellUsd; // we take all Usd money without cents
+                weHaveByr = weTakeUsd * rate;
                 // how many Byr we have if we sell all Usd
                 exchangeResultA = exchange(nowTimeDay, ratesH, weTakeUsd, "Usd", "Byr");
                 // exchangeResultA[0] = fromByr; exchangeResultA[1] = fromByn; exchangeResultA[2] = fromUsd;
