@@ -148,16 +148,16 @@ function exchange(nowTimeDay, ratesH, amount, fromCurrency, toCurrency){
     // exchangeResultA[3] = toByr; exchangeResultA[4] = toByn; exchangeResultA[5] = toUsd;
     if((fromCurrency === "Byr") || (fromCurrency === "Byn")){
         if(fromCurrency === "Byr"){
-            fromByr = amount; toUsd = Math.round(amount/rate);
+            fromByr = amount; toUsd = Math.floor(amount/rate);// floor is to safe i fthe result will be 5.000001
         } else{
-            fromByn = amount; toUsd = Math.round(amount/rate);
+            fromByn = amount; toUsd = Math.floor(amount/rate);// floor is to safe i fthe result will be 5.000001
         }
     }
     if((toCurrency === "Byr") || (toCurrency === "Byn")){
         if(toCurrency === "Byr"){
-            fromUsd = amount; toByr = Math.round(amount*rate);
+            fromUsd = amount; toByr = Math.floor(amount * rate * 100) / 100;// 2 numbers after the point
         } else{
-            fromUsd = amount; toByn = Math.round(amount*rate);
+            fromUsd = amount; toByn = Math.floor(amount * rate * 100) / 100;// 2 numbers after the point
         }
     }
     exchangeResultA[0] = fromByr; exchangeResultA[1] = fromByn; exchangeResultA[2] = fromUsd;
