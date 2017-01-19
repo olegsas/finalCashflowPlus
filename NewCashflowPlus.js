@@ -379,12 +379,14 @@ function ifWeNeedExchange(nowTimeDay, ratesH, Byr, Byn, Usd){
 
 }
 
-function denominationExchange(nowTimeDay, Byr, Byn){
-    var toByn = Math.floor(Byr / 10000); // we calculate the incomes, ignore if < 10000.
-    var fromByr = toByn * 10000; // we take an integer fromByr
-    makeExchangeTransaction(nowTimeDay, "Exp", "Denomination", "ByrByn", fromByr, "Byr", "PurseByr");
+function denominationExchange(nowTimeDay, PurseByr, CardByr){
+    
+    
+    // var toByn = Math.floor(Byr / 10000); // we calculate the incomes, ignore if < 10000.
+    // var fromByr = toByn * 10000; // we take an integer fromByr
+    // makeExchangeTransaction(nowTimeDay, "Exp", "Denomination", "ByrByn", fromByr, "Byr", "PurseByr");
     // expense transaction Byr
-    makeExchangeTransaction(nowTimeDay, "Inc", "Denomination", "ByrByn", toByn, "Byn", "PurseByn");
+    // makeExchangeTransaction(nowTimeDay, "Inc", "Denomination", "ByrByn", toByn, "Byn", "PurseByn");
     // incoming transaction Byn
 }
 
@@ -401,16 +403,16 @@ function runCashFlowPLus(begin, end){// we want to use day from the begining Day
     //finishTimeDay = 17130
     // number of the days is finishTimeDay-startTimeDay+1 = 2521
     var flowcashboxA = []; // flowcashboxA is the global cashbox, it is the cashflow
-    flowcashboxA[0] = 0; flowcashboxA[1] = 0; flowcashboxA[2] = 0;
-    // let cashboxA[0] = Byr, cashboxA[1] = Byn, cashboxA[2] = Usd
+    flowcashboxA[0] = 0; flowcashboxA[1] = 0; flowcashboxA[2] = 0; flowcashboxA[3] = 0; flowcashboxA[4] = 0;
+    // let cashboxA[0] = Byr, cashboxA[1] = Byn, cashboxA[2] = Usd, cashboxA[3] = PurseByr, cashboxA[4] = CardByr
     var cashboxA = []; // we store the result of calculateCashDelta in it
     var preCashboxA = []; // we previously calculate the cashflow before operating currency exchange
-    preCashboxA[0] = 0; preCashboxA[1] = 0; preCashboxA[2] = 0;
+    preCashboxA[0] = 0; preCashboxA[1] = 0; preCashboxA[2] = 0; preCashboxA[3] = 0; preCashboxA[4] = 0;
 
     for(var cycleTimeDay = startTimeDay; cycleTimeDay <= finishTimeDay; cycleTimeDay++){
         
         cashboxA = calculateCashDelta(cycleTimeDay);
-        // dayCashboxA[0] = Byr; dayCashboxA[1] = Byn; dayCashboxA[2] = Usd;
+        // dayCashboxA[0] = Byr; dayCashboxA[1] = Byn; dayCashboxA[2] = Usd; dayCashboxA[3] = PurseByr; dayCashboxA[4] = CardByr;
         for(var i = 0; i < flowcashboxA.length; i++){
             preCashboxA[i] = flowcashboxA[i] + cashboxA[i];
             // we are calculating previously cashflow without exchange
@@ -419,8 +421,9 @@ function runCashFlowPLus(begin, end){// we want to use day from the begining Day
             // print("==================cycleTimeDay = " + cycleTimeDay);
             // print("=================DAY_OF_DENOMINATION = " + DAY_OF_DENOMINATION);
             // we need to transfer Byr into Byn
-            denominationExchange(cycleTimeDay, preCashboxA[0], preCashboxA[1]);
+            denominationExchange(cycleTimeDay, preCashboxA[3], preCashboxA[4]);//// denomination/////////////////
             // we generate exchange transactions from Byr to Byn
+            // we need only PurseByr and CardByr accounts to make the transfer
         }
         // print("cycleTimeDay ---------------------- " + cycleTimeDay);
         
