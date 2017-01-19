@@ -383,7 +383,6 @@ function ifWeNeedExchange(nowTimeDay, ratesH, Byr, Byn, Usd){
 function denominationExchange(nowTimeDay, PurseByr, Byr){
     
     print("##The value of PurseByr ====================" + PurseByr);
-    print("##The value of CardByr ==================" + CardByr);
     // var toByn = Math.floor(Byr / 10000); // we calculate the incomes, ignore if < 10000.
     // var fromByr = toByn * 10000; // we take an integer fromByr
     var fromPurseByr = PurseByr; // we take all PurseByr 
