@@ -240,8 +240,8 @@ function ifWeNeedExchange(nowTimeDay, ratesH, Byr, Byn, Usd){
     
     if(nowTimeDay < DAY_OF_DENOMINATION){
         if((Byr > 0) && (Usd < 0)){
-            print("We exchange Byr ##day is = " + nowTimeDay);
-            print("Byr is = " + Byr);
+            // print("We exchange Byr ##day is = " + nowTimeDay);
+            // print("Byr is = " + Byr);
             UsdNoCent = Math.floor(Usd); // Usd <0 if Usd = -5.60 then UsdNoCent = -6
             // print("UsdNoCent = " + UsdNoCent);
             weNeedByr = -UsdNoCent * rate;
@@ -261,13 +261,13 @@ function ifWeNeedExchange(nowTimeDay, ratesH, Byr, Byn, Usd){
             if(Byr < weNeedByr){
                 // we have not enough money, we will sell all Byr
                 weCanBuyUsd = Math.floor(Byr / rate); // we can buy this Usd without cents
-                print("weCanBuyUsd = " + weCanBuyUsd);
+                // print("weCanBuyUsd = " + weCanBuyUsd);
                 weTakeByr = weCanBuyUsd * rate; // we take all Byr money to buy Usd without cents
-                print("weTakeByr = " + weTakeByr);
+                // print("weTakeByr = " + weTakeByr);
                 // how many Usd we have if we sell all Byr
                 exchangeResultA = exchange(nowTimeDay, ratesH, weTakeByr, "Byr", "Usd");
-                print("exchangeResultA[0] = " + exchangeResultA[0]);
-                print("exchangeResultA[5] = " + exchangeResultA[5]);
+                // print("exchangeResultA[0] = " + exchangeResultA[0]);
+                // print("exchangeResultA[5] = " + exchangeResultA[5]);
                 // exchangeResultA[0] = fromByr; exchangeResultA[1] = fromByn; exchangeResultA[2] = fromUsd;
                 // exchangeResultA[3] = toByr; exchangeResultA[4] = toByn; exchangeResultA[5] = toUsd;
                 makeExchangeTransaction(nowTimeDay, "Exp", "Exchange", "ByrUsd", exchangeResultA[0], "Byr", "PurseByr");
@@ -382,7 +382,7 @@ function ifWeNeedExchange(nowTimeDay, ratesH, Byr, Byn, Usd){
 
 function denominationExchange(nowTimeDay, PurseByr, Byr){
     
-    print("##The value of PurseByr ====================" + PurseByr);
+    // print("##The value of PurseByr ====================" + PurseByr);
     // var toByn = Math.floor(Byr / 10000); // we calculate the incomes, ignore if < 10000.
     // var fromByr = toByn * 10000; // we take an integer fromByr
     var fromPurseByr = PurseByr; // we take all PurseByr 
@@ -438,7 +438,7 @@ function runCashFlowPLus(begin, end){// we want to use day from the begining Day
             // print("==================cycleTimeDay = " + cycleTimeDay);
             // print("=================DAY_OF_DENOMINATION = " + DAY_OF_DENOMINATION);
             // we need to transfer Byr into Byn
-            print("##The value of Byr ===================================" + preCashboxA[0]);
+            // print("##The value of Byr ===================================" + preCashboxA[0]);
             denominationExchange(cycleTimeDay, preCashboxA[3], preCashboxA[0]);//// denomination/////////////////
             // we generate exchange transactions from Byr to Byn
             // we need only PurseByr and CardByr accounts to make the transfer
