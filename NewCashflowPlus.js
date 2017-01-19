@@ -90,8 +90,8 @@ function calculateCashDelta(nowTimeDay){
     // let cashboxA[0] = Byr, cashboxA[1] = Byn, cashboxA[2] = USD
     var nowData = new Date();
     nowData.setTime(nowTimeDay*1000*60*60*24);
-    var cashboxA = [];//0 - Byr, 1 - Byn, 2 - USD
-    cashboxA[0] = 0; cashboxA[1] = 0; cashboxA[2] = 0;
+    var cashboxA = [];//0 - Byr, 1 - Byn, 2 - USD, 3 - PurseByr, 4 - CardByr for the correct transfer at the denomination date
+    cashboxA[0] = 0; cashboxA[1] = 0; cashboxA[2] = 0; cashboxA[3] = 0; cashboxA[4] = 0;
     var i = 0,
     TypeA = [],
     OperationNameA = [],
@@ -105,6 +105,7 @@ function calculateCashDelta(nowTimeDay){
                 OperationNameA[i] = obj.OperationName;
                 AmountA[i] = obj.Amount;
                 CurrencyA[i] = obj.Currency;
+                Account[i] = obj.Account;// we need to know the account to correctly make transfer at the denomination date
                 i++;
             }
         );
@@ -115,9 +116,25 @@ function calculateCashDelta(nowTimeDay){
                     case "Byr":
                         if(TypeA[j] === "Exp"){
                             cashboxA[0] = cashboxA[0] - AmountA[j];
+                            if(AccountA[j] === "PurseByr"){
+                                cashboxA[3] = cashboxA[3] - amountA[j];
+                            }
+                            else{
+                                cashboxA[4] = cashboxA[4] - AmountA[j];
+                            }
+                            // we calculate the cashboxA for the PurseByr or for the CardByr
+                            // Byr cashboxA[0] don't care about the PurseByr or CardByr account it is just Byr
                         }
                         else{
                             cashboxA[0] = cashboxA[0] + AmountA[j];
+                            if(AccountA[j] === "PurseByr"){
+                                cashboxA[3] = cashboxA[3] + amountA[j];
+                            }
+                            else{
+                                cashboxA[4] = cashboxA[4] + amountA[j];
+                            }
+                            // we calculate the cashboxA for the PurseByr or for the CardByr
+                            // Byr cashboxA[0] don't care about the PurseByr or CardByr account it is just Byr
                         };
                         break;
                     case "Byn":
