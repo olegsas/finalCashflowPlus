@@ -97,6 +97,7 @@ function calculateCashDelta(nowTimeDay){
     OperationNameA = [],
     AmountA = [],
     CurrencyA = [],
+    AccountA = [],
     cursor = db.transactions.find({"Date": nowData}),
     length;
         cursor.forEach(
@@ -105,7 +106,7 @@ function calculateCashDelta(nowTimeDay){
                 OperationNameA[i] = obj.OperationName;
                 AmountA[i] = obj.Amount;
                 CurrencyA[i] = obj.Currency;
-                Account[i] = obj.Account;// we need to know the account to correctly make transfer at the denomination date
+                AccountA[i] = obj.Account;// we need to know the account to correctly make transfer at the denomination date
                 i++;
             }
         );
@@ -117,7 +118,7 @@ function calculateCashDelta(nowTimeDay){
                         if(TypeA[j] === "Exp"){
                             cashboxA[0] = cashboxA[0] - AmountA[j];
                             if(AccountA[j] === "PurseByr"){
-                                cashboxA[3] = cashboxA[3] - amountA[j];
+                                cashboxA[3] = cashboxA[3] - AmountA[j];
                             }
                             else{
                                 cashboxA[4] = cashboxA[4] - AmountA[j];
@@ -128,10 +129,10 @@ function calculateCashDelta(nowTimeDay){
                         else{
                             cashboxA[0] = cashboxA[0] + AmountA[j];
                             if(AccountA[j] === "PurseByr"){
-                                cashboxA[3] = cashboxA[3] + amountA[j];
+                                cashboxA[3] = cashboxA[3] + AmountA[j];
                             }
                             else{
-                                cashboxA[4] = cashboxA[4] + amountA[j];
+                                cashboxA[4] = cashboxA[4] + AmountA[j];
                             }
                             // we calculate the cashboxA for the PurseByr or for the CardByr
                             // Byr cashboxA[0] don't care about the PurseByr or CardByr account it is just Byr
@@ -379,11 +380,27 @@ function ifWeNeedExchange(nowTimeDay, ratesH, Byr, Byn, Usd){
 
 }
 
-function denominationExchange(nowTimeDay, PurseByr, CardByr){
+function denominationExchange(nowTimeDay, PurseByr, Byr){
     
-    
+    print("##The value of PurseByr ====================" + PurseByr);
+    print("##The value of CardByr ==================" + CardByr);
     // var toByn = Math.floor(Byr / 10000); // we calculate the incomes, ignore if < 10000.
     // var fromByr = toByn * 10000; // we take an integer fromByr
+    var fromPurseByr = PurseByr; // we take all PurseByr 
+    var toPurseByn = Math.floor(fromPurseByr / 10000); // the we exchange PurseByr to the PurseByn
+    
+    makeExchangeTransaction(nowTimeDay, "Exp", "Denomination", "ByrByn", fromPurseByr, "Byr", "PurseByr");
+
+    makeExchangeTransaction(nowTimeDay, "Inc", "Denomination", "ByrByn", toPurseByn, "Byn", "PurseByn");
+
+    var fromCardByr = Byr - PurseByr;
+    var toCardByn = Math.floor(fromCardByr / 10000); // we exchange CardByr to the CardByn
+
+    makeExchangeTransaction(nowTimeDay, "Exp", "Denomination", "ByrByn", fromCardByr, "Byr", "CardByr");
+
+    makeExchangeTransaction(nowTimeDay, "Inc", "Denomination", "ByrByn", toCardByn, "Byn", "CardByn");
+
+    
     // makeExchangeTransaction(nowTimeDay, "Exp", "Denomination", "ByrByn", fromByr, "Byr", "PurseByr");
     // expense transaction Byr
     // makeExchangeTransaction(nowTimeDay, "Inc", "Denomination", "ByrByn", toByn, "Byn", "PurseByn");
@@ -421,7 +438,8 @@ function runCashFlowPLus(begin, end){// we want to use day from the begining Day
             // print("==================cycleTimeDay = " + cycleTimeDay);
             // print("=================DAY_OF_DENOMINATION = " + DAY_OF_DENOMINATION);
             // we need to transfer Byr into Byn
-            denominationExchange(cycleTimeDay, preCashboxA[3], preCashboxA[4]);//// denomination/////////////////
+            print("##The value of Byr ===================================" + preCashboxA[0]);
+            denominationExchange(cycleTimeDay, preCashboxA[3], preCashboxA[0]);//// denomination/////////////////
             // we generate exchange transactions from Byr to Byn
             // we need only PurseByr and CardByr accounts to make the transfer
         }
