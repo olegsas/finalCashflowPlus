@@ -409,6 +409,7 @@ function denominationExchange(nowTimeDay, PurseByr, Byr){
 function runCashFlowPLus(begin, end){// we want to use day from the begining Day 1970
     // setup the WalletsIdH
     findWallet("PurseByr"); findWallet("PurseByn"); findWallet("SafeUsd");
+    findWallet("CardByr"); findWallet("CardByn");
     //_id of the wallets are in the WalletsIdH[accountName]
     //ratesH.data is in a string format
     var startDATE = standartDate(begin);
